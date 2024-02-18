@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=progeek_loading
+Description=PROGEEK loading animation
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/progeek_loading
+ScriptFile=/usr/share/plymouth/themes/progeek_loading/progeek.script
