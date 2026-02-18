@@ -27,24 +27,25 @@ Window.SetBackgroundBottomColor (0.0627, 0.1019, 0.1255);
 
 nframes = 191;
 nseconds = 6.366667;
-for (i = 1; i <= nframes; i++)
-  frames_buffer[i] = Image("progress-" + i + ".png");
-video = Sprite();
 
-// Scale factor based on screen height vs frame height
-scale = Window.GetHeight(0) / frames_buffer[1].GetHeight();
+// Pre-scale all frames once at load time
+scale = Window.GetHeight(0) / Image("progress-1.png").GetHeight();
+for (i = 1; i <= nframes; i++) {
+  raw = Image("progress-" + i + ".png");
+  frames_buffer[i] = raw.Scale(raw.GetWidth() * scale, raw.GetHeight() * scale);
+}
+
+video = Sprite();
+video.SetX(Window.GetWidth() / 2 - frames_buffer[1].GetWidth() / 2);
+video.SetY(Window.GetHeight() / 2 - frames_buffer[1].GetHeight() / 2);
 
 progress = 1;
-frame = null;
 fun refresh_callback (){
     if(Math.Int(progress)<=nframes){
        frame = frames_buffer[Math.Int(progress)];
        progress = progress + ((nframes/nseconds)/50) ;
     }
-    scaled = frame.Scale(frame.GetWidth() * scale, frame.GetHeight() * scale);
-    video.SetImage(scaled);
-    video.SetX(Window.GetWidth() / 2 - scaled.GetWidth() / 2);
-    video.SetY(Window.GetHeight() / 2 - scaled.GetHeight() / 2);
+    video.SetImage(frame);
   }
 Plymouth.SetRefreshFunction (refresh_callback);
 
@@ -110,3 +111,10 @@ fun MessageCallback(text) {
     message.sprite.SetPosition(screen.half.w - message.image.GetWidth() / 2, message.image.GetHeight());
 }
 Plymouth.SetMessageFunction(MessageCallback);
+
+
+//----------------------------------------- Quit -----------------------------------
+fun QuitCallback() {
+    video.SetOpacity(0);
+}
+Plymouth.SetQuitFunction(QuitCallback);
