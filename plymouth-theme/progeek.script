@@ -30,9 +30,10 @@ nseconds = 6.366667;
 for (i = 1; i <= nframes; i++)
   frames_buffer[i] = Image("progress-" + i + ".png");
 video = Sprite();
-#Place in the center (useful if image is not scaled at Window resolution)
-video.SetX(Window.GetWidth() / 2 - frames_buffer[1].GetWidth() / 2);
-video.SetY(Window.GetHeight() / 2 - frames_buffer[1].GetHeight() / 2);
+
+// Scale factor based on screen height vs frame height
+scale = Window.GetHeight(0) / frames_buffer[1].GetHeight();
+
 progress = 1;
 frame = null;
 fun refresh_callback (){
@@ -40,7 +41,10 @@ fun refresh_callback (){
        frame = frames_buffer[Math.Int(progress)];
        progress = progress + ((nframes/nseconds)/50) ;
     }
-    video.SetImage(frame);
+    scaled = frame.Scale(frame.GetWidth() * scale, frame.GetHeight() * scale);
+    video.SetImage(scaled);
+    video.SetX(Window.GetWidth() / 2 - scaled.GetWidth() / 2);
+    video.SetY(Window.GetHeight() / 2 - scaled.GetHeight() / 2);
   }
 Plymouth.SetRefreshFunction (refresh_callback);
 
